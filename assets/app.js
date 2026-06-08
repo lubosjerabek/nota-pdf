@@ -64,7 +64,7 @@ function _initServerSave() {
         btn.disabled = true;
         statusMsg.textContent = 'Saving…';
         try {
-            const res = await fetch('save.php', {
+            const res = await fetch('save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

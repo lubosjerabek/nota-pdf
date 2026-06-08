@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 
 if (!isset($_FILES['pdf']) || $_FILES['pdf']['error'] !== UPLOAD_ERR_OK) {
     $code = $_FILES['pdf']['error'] ?? -1;
-    header('Location: index.php?error=' . urlencode("Upload failed (code $code)"));
+    header('Location: /?error=' . urlencode("Upload failed (code $code)"));
     exit;
 }
 
@@ -37,7 +37,7 @@ $file = $_FILES['pdf'];
 $finfo = new finfo(FILEINFO_MIME_TYPE);
 $mime  = $finfo->file($file['tmp_name']);
 if ($mime !== 'application/pdf') {
-    header('Location: index.php?error=' . urlencode('Only PDF files are accepted.'));
+    header('Location: /?error=' . urlencode('Only PDF files are accepted.'));
     exit;
 }
 
@@ -48,14 +48,14 @@ $safeName     = substr($safeName, 0, 80);
 $filename     = $safeName . '_' . bin2hex(random_bytes(4)) . '.pdf';
 
 if (!is_dir($uploadDir) && !mkdir($uploadDir, 0750, true)) {
-    header('Location: index.php?error=' . urlencode('Upload directory could not be created.'));
+    header('Location: /?error=' . urlencode('Upload directory could not be created.'));
     exit;
 }
 
 if (!move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
-    header('Location: index.php?error=' . urlencode('Failed to save the file.'));
+    header('Location: /?error=' . urlencode('Failed to save the file.'));
     exit;
 }
 
-header('Location: annotate.php?file=' . urlencode($filename));
+header('Location: /annotate?file=' . urlencode($filename));
 exit;

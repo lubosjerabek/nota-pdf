@@ -1,9 +1,27 @@
 # Register .mjs as JavaScript so browsers accept it as an ES module
 AddType text/javascript .mjs
 
-# Deny direct HTTP access to uploaded PDFs and saved annotations
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteRule ^uploads/ - [F,L]
+
+    # Block direct HTTP access to uploaded PDFs and saved annotations
+    RewriteRule ^uploads/     - [F,L]
     RewriteRule ^annotations/ - [F,L]
+
+    # External redirects (GET only — POST must not be redirected or the body is lost)
+    # /index.php → /
+    RewriteCond %{THE_REQUEST} ^GET\s
+    RewriteRule ^index\.php$ / [R=301,L,QSA]
+    # /anything.php → /anything
+    RewriteCond %{THE_REQUEST} ^GET\s
+    RewriteRule ^(.+)\.php$ /$1 [R=301,L,QSA]
+
+    # Internal routing: / → index.php
+    RewriteRule ^$ index.php [L]
+
+    # Internal routing: /name → name.php  (only when name.php exists and name is not a real file/dir)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.php -f
+    RewriteRule ^([^/]+)$ $1.php [L,QSA]
 </IfModule>

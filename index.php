@@ -16,7 +16,7 @@
             <div class="error-msg"><?= htmlspecialchars($_GET['error']) ?></div>
         <?php endif; ?>
 
-        <form id="upload-form" action="upload.php" method="post" enctype="multipart/form-data">
+        <form id="upload-form" action="upload" method="post" enctype="multipart/form-data">
             <div class="drop-zone" id="drop-zone">
                 <input type="file" name="pdf" id="file-input" accept=".pdf,application/pdf" required>
                 <div class="drop-content">

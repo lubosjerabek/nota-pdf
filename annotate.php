@@ -5,13 +5,13 @@ $filename = $_GET['file'] ?? '';
 
 // Validate: must be a filename only (no path traversal), must exist in uploads/
 if (!$filename || $filename !== basename($filename) || !preg_match('/^[a-zA-Z0-9_\-]+\.pdf$/', $filename)) {
-    header('Location: index.php?error=' . urlencode('Invalid file.'));
+    header('Location: /?error=' . urlencode('Invalid file.'));
     exit;
 }
 
 $path = __DIR__ . '/uploads/' . $filename;
 if (!file_exists($path)) {
-    header('Location: index.php?error=' . urlencode('File not found.'));
+    header('Location: /?error=' . urlencode('File not found.'));
     exit;
 }
 
@@ -30,7 +30,7 @@ $displayName = str_replace('_', ' ', $displayName);
 <body class="annotate-page">
 
     <nav class="toolbar" id="toolbar">
-        <a href="index.php" class="toolbar-logo" title="Back to home">Nota</a>
+        <a href="/" class="toolbar-logo" title="Back to home">Nota</a>
         <div class="toolbar-sep"></div>
 
         <button class="tool-btn" data-tool="highlight" title="Highlight text (H)">
@@ -93,7 +93,7 @@ $displayName = str_replace('_', ' ', $displayName);
     <script>
         window.NOTA = {
             filename: <?= json_encode($filename) ?>,
-            pdfUrl: 'serve.php?file=' + <?= json_encode(rawurlencode($filename)) ?>,
+            pdfUrl: 'serve?file=' + <?= json_encode(rawurlencode($filename)) ?>,
             workerSrc: 'assets/vendor/pdf.worker.min.mjs'
         };
     </script>
