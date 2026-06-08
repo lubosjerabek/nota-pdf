@@ -47,6 +47,11 @@ $safeName     = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $originalName);
 $safeName     = substr($safeName, 0, 80);
 $filename     = $safeName . '_' . bin2hex(random_bytes(4)) . '.pdf';
 
+if (!is_dir($uploadDir) && !mkdir($uploadDir, 0750, true)) {
+    header('Location: index.php?error=' . urlencode('Upload directory could not be created.'));
+    exit;
+}
+
 if (!move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
     header('Location: index.php?error=' . urlencode('Failed to save the file.'));
     exit;
