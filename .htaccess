@@ -17,11 +17,11 @@ AddType text/javascript .mjs
     RewriteRule ^(.+)\.php$ /$1 [R=301,L,QSA]
 
     # Internal routing: / → index.php
-    RewriteRule ^$ index.php [L]
+    RewriteRule ^$ index.php [END]
 
     # Internal routing: /name → name.php  (only when name.php exists and name is not a real file/dir)
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME}.php -f
-    RewriteRule ^([^/]+)$ $1.php [L,QSA]
+    RewriteRule ^([^/]+)$ $1.php [END,QSA]
 </IfModule>
