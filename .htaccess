@@ -1,3 +1,6 @@
+# Register .mjs as JavaScript so browsers accept it as an ES module
+AddType text/javascript .mjs
+
 # Deny direct HTTP access to uploaded PDFs and saved annotations
 <IfModule mod_rewrite.c>
     RewriteEngine On
