@@ -104,55 +104,68 @@ window.NotaExport = (() => {
     }
 
     /**
-     * Draw a freehand stroke as an SVG path. Falls back to individual line
-     * segments if the path string causes a pdf-lib parsing error.
+     * Draw a freehand stroke as individual line segments.
+     * Annotations are stored in PDF user-space (bottom-left origin, y up),
+     * which matches pdf-lib's drawLine coordinate system directly.
+     * (drawSvgPath must NOT be used here — it expects SVG/top-left-origin
+     * coordinates and internally flips y, which would mirror the stroke.)
      * @param {import('pdf-lib').PDFPage} page
      * @param {import('./state').DrawAnnotation} ann
      */
     function _drawPath(page, ann) {
         if (!ann.points || ann.points.length < 2) return;
-        const { rgb } = PDFLib;
+        const { rgb, LineCapStyle } = PDFLib;
         const { r, g, b } = _hexToRgb(ann.color);
-
-        const pts = ann.points;
-        let d = `M ${pts[0][0]} ${pts[0][1]}`;
-        for (let i = 1; i < pts.length; i++) {
-            d += ` L ${pts[i][0]} ${pts[i][1]}`;
-        }
-
-        try {
-            page.drawSvgPath(d, {
-                borderColor: rgb(r, g, b),
-                borderWidth: ann.width,
-                borderLineCap: 1, // round caps
+        const color = rgb(r, g, b);
+        for (let i = 1; i < ann.points.length; i++) {
+            page.drawLine({
+                start: { x: ann.points[i-1][0], y: ann.points[i-1][1] },
+                end:   { x: ann.points[i][0],   y: ann.points[i][1] },
+                thickness: ann.width,
+                color,
+                lineCap: LineCapStyle.Round,
             });
-        } catch (_) {
-            // pdf-lib SVG path parsing can fail on degenerate paths; use segments
-            for (let i = 1; i < pts.length; i++) {
-                page.drawLine({
-                    start: { x: pts[i-1][0], y: pts[i-1][1] },
-                    end:   { x: pts[i][0],   y: pts[i][1] },
-                    thickness: ann.width,
-                    color: rgb(r, g, b),
-                });
-            }
         }
     }
 
     /**
-     * Draw a text note at its stored PDF-space position.
-     * Uses Helvetica to avoid needing to embed a custom font.
+     * Draw a text note with its sticky-note background, matching the on-screen
+     * appearance of .note-body (rgba(255,251,200) background, #d4c84b border).
+     *
+     * ann.y is the PDF-space y of the click point, which corresponds to the TOP
+     * of the note div in the browser. pdf-lib's drawText places the font baseline
+     * at y, so we shift down by (padV + ascent) to keep the text inside the box.
      * @param {import('pdf-lib').PDFPage} page
      * @param {import('./state').TextAnnotation} ann
-     * @param {number} _pageH  Page height (unused; reserved for future top-origin calcs).
+     * @param {number} _pageH
      * @param {import('pdf-lib').PDFFont} font
      */
     function _drawText(page, ann, _pageH, font) {
         const { rgb } = PDFLib;
         const { r, g, b } = _hexToRgb(ann.color);
         const size = ann.fontSize || 12;
+        const padH = 4, padV = 3;
         try {
-            page.drawText(ann.text, { x: ann.x, y: ann.y, size, font, color: rgb(r, g, b) });
+            const text = ann.text;
+            const textW = font.widthOfTextAtSize(text, size);
+            const boxH  = size + padV * 2;
+            // Background — same colour as .note-body
+            page.drawRectangle({
+                x: ann.x - padH,
+                y: ann.y - boxH,
+                width:  textW + padH * 2,
+                height: boxH,
+                color:       rgb(1, 0.984, 0.784),   // rgba(255,251,200)
+                opacity:     0.92,
+                borderColor: rgb(0.831, 0.784, 0.294), // #d4c84b
+                borderWidth: 0.75,
+            });
+            // Text — baseline shifted inside the box (0.75 ≈ Helvetica ascent ratio)
+            page.drawText(text, {
+                x: ann.x,
+                y: ann.y - padV - size * 0.75,
+                size, font, color: rgb(r, g, b),
+            });
         } catch (_) { /* skip if text contains unsupported characters */ }
     }
 
