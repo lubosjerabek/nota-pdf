@@ -1,0 +1,338 @@
+/* ── Reset / base ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+    --bg:       #f4f5f7;
+    --surface:  #ffffff;
+    --toolbar:  #1e2026;
+    --toolbar-border: #2e3139;
+    --accent:   #4a90e2;
+    --danger:   #e25454;
+    --text:     #1a1d23;
+    --muted:    #6b7280;
+    --radius:   8px;
+    --shadow:   0 2px 12px rgba(0,0,0,.12);
+}
+
+html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; color: var(--text); }
+
+/* ── Upload page ────────────────────────────────────────────────────── */
+body.upload-page {
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.upload-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2.5rem 3rem;
+    width: min(480px, 92vw);
+    text-align: center;
+}
+
+.upload-card h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    margin-bottom: .25rem;
+}
+
+.upload-card .subtitle {
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+    font-size: .95rem;
+}
+
+.error-msg {
+    background: #fef2f2;
+    color: var(--danger);
+    border: 1px solid #fecaca;
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    font-size: .875rem;
+    margin-bottom: 1rem;
+}
+
+.drop-zone {
+    border: 2px dashed #d1d5db;
+    border-radius: var(--radius);
+    padding: 2rem 1rem;
+    cursor: pointer;
+    transition: border-color .15s, background .15s;
+    position: relative;
+}
+
+.drop-zone:hover, .drop-zone.drag-over {
+    border-color: var(--accent);
+    background: #f0f7ff;
+}
+
+.drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+.drop-content svg {
+    color: var(--muted);
+    margin-bottom: .75rem;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.drop-content p { color: var(--muted); font-size: .9rem; }
+.drop-content .link { color: var(--accent); text-decoration: underline; cursor: pointer; }
+
+.file-chosen { color: var(--text) !important; font-weight: 500; }
+.hidden { display: none !important; }
+
+button[type="submit"] {
+    margin-top: 1.25rem;
+    width: 100%;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: .75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+}
+button[type="submit"]:disabled { opacity: .4; cursor: not-allowed; }
+button[type="submit"]:not(:disabled):hover { opacity: .88; }
+
+/* ── Annotate page layout ───────────────────────────────────────────── */
+body.annotate-page {
+    display: grid;
+    grid-template-rows: 48px 1fr 28px;
+    grid-template-columns: 1fr;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--bg);
+}
+
+/* ── Toolbar ────────────────────────────────────────────────────────── */
+.toolbar {
+    grid-row: 1;
+    background: var(--toolbar);
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 8px;
+    border-bottom: 1px solid var(--toolbar-border);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+}
+.toolbar::-webkit-scrollbar { display: none; }
+
+.toolbar-logo {
+    color: #fff;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: -.02em;
+    text-decoration: none;
+    padding: 0 8px;
+    flex-shrink: 0;
+}
+
+.toolbar-sep {
+    width: 1px;
+    height: 24px;
+    background: var(--toolbar-border);
+    margin: 0 4px;
+    flex-shrink: 0;
+}
+
+.tool-btn, .icon-btn {
+    background: none;
+    border: none;
+    color: #9ca3af;
+    cursor: pointer;
+    border-radius: 6px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background .1s, color .1s;
+}
+.tool-btn svg, .icon-btn svg { width: 18px; height: 18px; }
+.tool-btn:hover, .icon-btn:hover { background: rgba(255,255,255,.08); color: #fff; }
+.tool-btn.active { background: var(--accent); color: #fff; }
+.icon-btn:disabled { opacity: .35; cursor: not-allowed; }
+
+.export-btn { color: #6ee7b7; }
+.export-btn:hover { background: rgba(110,231,183,.12); color: #6ee7b7; }
+.save-server-btn { color: #93c5fd; }
+.save-server-btn:hover { background: rgba(147,197,253,.12); color: #93c5fd; }
+
+.color-swatch-wrap {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+.color-swatch-wrap input[type="color"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+}
+.color-swatch {
+    display: block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,.25);
+    background: #f5c518;
+    pointer-events: none;
+    margin: 4px;
+}
+
+.stroke-wrap {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+.stroke-wrap input[type="range"] {
+    width: 64px;
+    cursor: pointer;
+    accent-color: var(--accent);
+}
+
+.toolbar-filename {
+    margin-left: auto;
+    color: #6b7280;
+    font-size: .8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 200px;
+    padding-right: 8px;
+    flex-shrink: 1;
+}
+
+/* ── PDF Viewer ─────────────────────────────────────────────────────── */
+.viewer {
+    grid-row: 2;
+    overflow-y: auto;
+    overflow-x: auto;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.page-container {
+    position: relative;
+    box-shadow: var(--shadow);
+    background: #fff;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+.pdf-canvas {
+    display: block;
+}
+
+/* PDF.js text layer — sits above the PDF canvas for selection */
+.textLayer {
+    position: absolute;
+    top: 0; left: 0;
+    overflow: hidden;
+    line-height: 1;
+    pointer-events: none; /* enabled per-tool in JS */
+}
+
+/* PDF.js injects these */
+.textLayer span,
+.textLayer br { color: transparent; position: absolute; white-space: pre; cursor: text; }
+.textLayer ::selection { background: rgba(74,144,226,.3); }
+.textLayer ::-moz-selection { background: rgba(74,144,226,.3); }
+
+/* Annotation canvas — topmost interactive layer */
+.annotation-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    cursor: crosshair;
+}
+
+/* Text notes layer */
+.notes-layer {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.note {
+    position: absolute;
+    pointer-events: auto;
+    max-width: 240px;
+    min-width: 40px;
+    cursor: default;
+}
+
+.note-body {
+    font-size: 13px;
+    font-family: system-ui, sans-serif;
+    background: rgba(255,251,200,.92);
+    border: 1px solid #d4c84b;
+    border-radius: 4px;
+    padding: 3px 6px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-shadow: 0 1px 4px rgba(0,0,0,.15);
+    user-select: none;
+}
+
+.note.selected .note-body {
+    outline: 2px solid var(--accent);
+}
+
+.note-editor {
+    position: absolute;
+    min-width: 140px;
+    min-height: 36px;
+    font-size: 13px;
+    font-family: system-ui, sans-serif;
+    border: 2px solid var(--accent);
+    border-radius: 4px;
+    padding: 3px 6px;
+    background: rgba(255,251,200,.97);
+    resize: both;
+    z-index: 10;
+    outline: none;
+    box-shadow: 0 2px 8px rgba(0,0,0,.18);
+}
+
+/* ── Status bar ─────────────────────────────────────────────────────── */
+#status-bar {
+    grid-row: 3;
+    background: var(--toolbar);
+    border-top: 1px solid var(--toolbar-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-size: .75rem;
+    color: #6b7280;
+}

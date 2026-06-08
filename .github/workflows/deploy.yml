@@ -1,0 +1,29 @@
+name: Deploy to server via FTP
+
+on:
+  push:
+    branches:
+      - main
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    name: FTP Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server:      ${{ secrets.FTP_SERVER }}
+          username:    ${{ secrets.FTP_USERNAME }}
+          password:    ${{ secrets.FTP_PASSWORD }}
+          # Set FTP_SERVER_DIR in repo secrets, e.g. /public_html/nota/ or /web/nota/
+          server-dir:  ${{ secrets.FTP_SERVER_DIR }}
+          local-dir:   ./
+          dry-run:     false
+          log-level:   standard

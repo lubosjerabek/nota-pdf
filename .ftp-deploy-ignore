@@ -1,0 +1,23 @@
+# ── Server-managed directories (exist on server but are gitignored here) ──────
+# These are created by setup or at runtime; never overwrite from CI.
+uploads/
+annotations/
+
+# ── Development / test tooling ─────────────────────────────────────────────────
+tests/
+.venv/
+__pycache__/
+*.pyc
+pytest.ini
+requirements.txt
+.pytest_cache/
+
+# ── Version control + CI config ────────────────────────────────────────────────
+.git/
+.gitignore
+.github/
+.ftp-deploy-ignore
+
+# ── Local dev artefacts ────────────────────────────────────────────────────────
+.DS_Store
+.ftp-deploy-sync-state.json

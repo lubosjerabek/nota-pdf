@@ -1,0 +1,6 @@
+# Deny direct HTTP access to uploaded PDFs and saved annotations
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^uploads/ - [F,L]
+    RewriteRule ^annotations/ - [F,L]
+</IfModule>
