@@ -93,7 +93,7 @@ $displayName = str_replace('_', ' ', $displayName);
     <script>
         window.NOTA = {
             filename: <?= json_encode($filename) ?>,
-            pdfUrl: 'uploads/' + <?= json_encode(rawurlencode($filename)) ?>,
+            pdfUrl: 'serve.php?file=' + <?= json_encode(rawurlencode($filename)) ?>,
             workerSrc: 'assets/vendor/pdf.worker.min.mjs'
         };
     </script>
