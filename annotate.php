@@ -34,16 +34,20 @@ $displayName = str_replace('_', ' ', $displayName);
         <div class="toolbar-sep"></div>
 
         <button class="tool-btn" data-tool="highlight" title="Highlight text (H)">
-            <svg viewBox="0 0 24 24"><rect x="3" y="14" width="18" height="6" rx="1" fill="currentColor" opacity=".4"/><line x1="5" y1="10" x2="19" y2="10" stroke="currentColor" stroke-width="2"/><line x1="7" y1="6" x2="17" y2="6" stroke="currentColor" stroke-width="2"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-6 6v3h3l6-6"/><path d="m14 6-2.5 2.5 3.5 3.5 2.5-2.5-3.5-3.5z"/><path d="m11.5 8.5 3.5 3.5"/></svg>
+            <span>Highlight</span>
         </button>
         <button class="tool-btn" data-tool="draw" title="Draw (D)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25z"/><path d="M20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+            <span>Draw</span>
         </button>
         <button class="tool-btn" data-tool="text" title="Text note (T)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9z"/><polyline points="16 3 16 9 22 9"/></svg>
+            <span>Text Note</span>
         </button>
         <button class="tool-btn" data-tool="select" title="Select / delete (S)">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-7 1-3 7z"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/><path d="m13 13 6 6"/></svg>
+            <span>Select</span>
         </button>
 
         <div class="toolbar-sep"></div>

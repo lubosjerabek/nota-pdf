@@ -15,9 +15,9 @@ def test_highlight_tool_activates(page, annotated_page):
     assert "active" in btn.get_attribute("class")
 
 
-def test_highlight_tool_is_default(page, annotated_page):
+def test_select_tool_is_default(page, annotated_page):
     page.wait_for_timeout(300)
-    btn = page.locator('[data-tool="highlight"]')
+    btn = page.locator('[data-tool="select"]')
     assert "active" in btn.get_attribute("class")
 
 

@@ -159,13 +159,24 @@ body.annotate-page {
     color: #9ca3af;
     cursor: pointer;
     border-radius: 6px;
-    width: 34px;
     height: 34px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     transition: background .1s, color .1s;
+}
+
+.icon-btn {
+    width: 34px;
+}
+
+.tool-btn {
+    width: auto;
+    padding: 0 10px;
+    gap: 6px;
+    font-size: 0.82rem;
+    font-weight: 500;
 }
 .tool-btn svg, .icon-btn svg { width: 18px; height: 18px; }
 .tool-btn:hover, .icon-btn:hover { background: rgba(255,255,255,.08); color: #fff; }

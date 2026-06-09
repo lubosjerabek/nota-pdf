@@ -27,7 +27,7 @@
  */
 window.NotaTools = (() => {
     /** @type {'highlight'|'draw'|'text'|'select'} */
-    let _activeTool = 'highlight';
+    let _activeTool = 'select';
     let _color = '#f5c518';
     let _strokeWidth = 3;
     let _drawing = false;
@@ -456,10 +456,14 @@ window.NotaTools = (() => {
             if (!text) return;
             const [px, py] = NotaViewer.canvasToPdf(pageNum, cx, cy);
             NotaState.pushUndo();
+            const newId = NotaState.uid();
             NotaState.add({
-                type: 'text', id: NotaState.uid(), page: pageNum,
+                type: 'text', id: newId, page: pageNum,
                 x: px, y: py, text, color: _color, fontSize: 12,
             });
+            redrawPage(pageNum);
+            setTool('select');
+            _selectedId = newId;
             redrawPage(pageNum);
         };
 
@@ -582,7 +586,7 @@ window.NotaTools = (() => {
         });
 
         _initKeyboard();
-        setTool('highlight');
+        setTool('select');
     }
 
     return { init, redrawPage, redrawAll, setTool, setColor, setStrokeWidth };
