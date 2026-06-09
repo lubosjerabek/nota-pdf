@@ -184,13 +184,88 @@ window.NotaTools = (() => {
             e.stopPropagation();
             _editNote(el, ann.id, pageNum);
         });
-        el.addEventListener('click', e => {
-            if (_activeTool === 'select') {
-                e.stopPropagation();
-                _setSelected(ann.id);
+
+        let isDragging = false;
+        let startX, startY;
+        let origLeft, origTop;
+
+        function startDrag(clientX, clientY, isTouch, originalEvent) {
+            isDragging = true;
+            startX = clientX;
+            startY = clientY;
+            origLeft = parseFloat(el.style.left) || 0;
+            origTop = parseFloat(el.style.top) || 0;
+
+            let hasMoved = false;
+
+            const onMove = ev => {
+                if (!isDragging) return;
+                const currentX = isTouch ? ev.touches[0].clientX : ev.clientX;
+                const currentY = isTouch ? ev.touches[0].clientY : ev.clientY;
+                const dx = currentX - startX;
+                const dy = currentY - startY;
+                if (Math.abs(dx) > 2 || Math.abs(dy) > 2) {
+                    hasMoved = true;
+                }
+                el.style.left = (origLeft + dx) + 'px';
+                el.style.top = (origTop + dy) + 'px';
+            };
+
+            const onUp = ev => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                if (isTouch) {
+                    document.removeEventListener('touchmove', onMove);
+                    document.removeEventListener('touchend', onUp);
+                } else {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                }
+
+                if (hasMoved) {
+                    const finalLeft = parseFloat(el.style.left) || 0;
+                    const finalTop = parseFloat(el.style.top) || 0;
+                    const [px, py] = NotaViewer.canvasToPdf(pageNum, finalLeft, finalTop);
+
+                    NotaState.pushUndo();
+                    NotaState.removeById(ann.id);
+                    NotaState.add({
+                        ...ann,
+                        x: px,
+                        y: py
+                    });
+                    _selectedId = ann.id;
+                } else {
+                    _setSelected(ann.id);
+                }
                 redrawPage(pageNum);
+            };
+
+            if (isTouch) {
+                document.addEventListener('touchmove', onMove, { passive: false });
+                document.addEventListener('touchend', onUp, { passive: false });
+            } else {
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
             }
+        }
+
+        el.addEventListener('mousedown', e => {
+            if (_activeTool !== 'select') return;
+            if (el.querySelector('.note-editor')) return;
+            e.stopPropagation();
+            startDrag(e.clientX, e.clientY, false, e);
         });
+
+        el.addEventListener('touchstart', e => {
+            if (_activeTool !== 'select') return;
+            if (el.querySelector('.note-editor')) return;
+            e.stopPropagation();
+            const touch = e.touches[0];
+            startDrag(touch.clientX, touch.clientY, true, e);
+        }, { passive: true });
+
         return el;
     }
 
@@ -213,15 +288,18 @@ window.NotaTools = (() => {
                 NotaState.pushUndo();
                 const anns = NotaState.getPage(pageNum);
                 const ann = anns.find(a => a.id === id);
-                if (ann) { ann.text = newText; NotaState.add; }
+                let px = 0, py = 0;
+                if (ann) {
+                    px = ann.x;
+                    py = ann.y;
+                } else {
+                    const [convertedX, convertedY] = NotaViewer.canvasToPdf(pageNum, parseFloat(el.style.left) || 0, parseFloat(el.style.top) || 0);
+                    px = convertedX;
+                    py = convertedY;
+                }
                 // Update via remove + re-add
                 NotaState.removeById(id);
-                const updated = { ...NotaState.getPage(pageNum), text: newText };
-                // Simplest: get annotation from state snapshot before remove
-                // Re-add with updated text
-                const all = NotaState.all();
-                // Already removed above — re-add from saved copy
-                NotaState.add({ type: 'text', id, page: pageNum, x: parseFloat(el.style.left), y: parseFloat(el.style.top), text: newText, color: el.style.color || _color, fontSize: 12 });
+                NotaState.add({ type: 'text', id, page: pageNum, x: px, y: py, text: newText, color: el.style.color || _color, fontSize: 12 });
                 redrawPage(pageNum);
             } else {
                 NotaState.pushUndo();
@@ -248,6 +326,7 @@ window.NotaTools = (() => {
     function setTool(tool) {
         _activeTool = tool;
         _selectedId = null;
+        document.body.dataset.activeTool = tool;
         document.querySelectorAll('.tool-btn').forEach(b => {
             b.classList.toggle('active', b.dataset.tool === tool);
         });

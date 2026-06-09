@@ -291,6 +291,10 @@ body.annotate-page {
     cursor: default;
 }
 
+body[data-active-tool="select"] .note {
+    cursor: move;
+}
+
 .note-body {
     font-size: 13px;
     font-family: system-ui, sans-serif;

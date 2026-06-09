@@ -22,8 +22,8 @@ def test_valid_pdf_redirects_to_annotate(page, server_url, sample_pdf):
     page.goto(server_url)
     page.set_input_files("#file-input", str(sample_pdf))
     page.click("#open-btn")
-    page.wait_for_url("**/annotate.php**", timeout=10_000)
-    assert "annotate.php" in page.url
+    page.wait_for_url("**/annotate*", timeout=10_000)
+    assert "annotate" in page.url
     assert "file=" in page.url
 
 

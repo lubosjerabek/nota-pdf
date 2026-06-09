@@ -30,7 +30,7 @@ def php_server():
         return
 
     proc = subprocess.Popen(
-        ["php", "-S", f"{HOST}:{PORT}", "-t", str(ROOT)],
+        ["php", "-S", f"{HOST}:{PORT}", "router.php"],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
     )
